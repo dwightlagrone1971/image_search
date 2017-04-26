@@ -1,0 +1,24 @@
+doctype html
+html
+  head
+    meta(charset="UTF-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge")
+    meta(name="viewport", content="width=device-width, initial-scale=1")
+    link(rel="stylesheet", type="text/css", href="stylesheets/style.css")
+    title= title
+  body
+    div.container
+      div#form
+        div#title
+          h1 Image Search
+        div.formSearch   
+          input#searchBar(type="text", name="search", placeholder="Start Search Here.....", onKeyPress="changeRoute()")
+          button#searchBtn(onclick="changeRouteButton()") Go!
+        
+    script(src="javascripts/scripts.js", type="text/javascript")
+    
+  
+script.
+  function move() {
+    window.location.href = '/layout'
+  }

@@ -1,9 +1,25 @@
 var express = require('express');
-var router = express.Router();
+var bodyParser = require('body-parser');
+var imgur = require('imgur');
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+var app = express();
+app.use(bodyParser.urlencoded({ extended: true }));
 
-module.exports = router;
+exports.home = function(req, res) {
+  
+  res.render('home');
+};
+
+exports.search = function(req, res) {
+  
+  var input = document.getElementById('#searchBar');
+  
+  
+  res.send('input');
+  
+};
+
+exports.latest = function(req, res) {
+  res.render('latest');
+};
+
