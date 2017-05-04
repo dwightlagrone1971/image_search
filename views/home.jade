@@ -8,17 +8,24 @@ html
     title= title
   body
     div.container
+      div#examples
+        h2 Examples
       div#form
         div#title
           h1 Image Search
-        div.formSearch   
-          input#searchBar(type="text", name="search", placeholder="Start Search Here.....", onKeyPress="changeRoute()")
-          button#searchBtn(onclick="changeRouteButton()") Go!
+        div.formSearch 
+          form(action="search/submit", method="post")
+            input#searchBar(type="text", name="search", value="", placeholder="Start Search Here.....", onkeydown="changeRoute(event)")
+            button#searchBtn(type="submit", onclick="changeRouteButton()") Go!
         
-    script(src="javascripts/scripts.js", type="text/javascript")
-    
   
 script.
-  function move() {
-    window.location.href = '/layout'
-  }
+    function changeRoute(event) {
+      var x = event.keyCode;
+      if (x == 13) {
+        window.location.href = "/search";
+      }
+    }
+    function changeRouteButton() {
+      window.location.href = "/search";
+    }
