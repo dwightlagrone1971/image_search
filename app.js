@@ -1,10 +1,8 @@
 var express = require('express');
 var path = require('path');
 var mongo = require('mongodb');
-var bodyParser = require('body-parser');
 var imgur = require('imgur');
 var https = require('https');
-var flatten = require('flat')
 
 // set port
 var port = process.env.PORT || 8080;
@@ -31,28 +29,34 @@ mongo.connect(monlab, function(err, db) {
     // set route to search imgur url
     app.get('/search/:query', function(req, res) {
         
+        // sart: clear database
         db.collection('search', {}, function(err, search) {
             if (err) throw err;
             search.remove({}), function(err, results) {
                 if (err) {
                     console.log(err);
                 }
-
             };
         });
-        
-        var url = req.params.query;
-        
-        // assign authentication variable to imgur
+        // end: clear database
+        // start: assign variables for url inputs
+        var query = req.params.query;
+        var string = query.match('=([^;]*)&');
+        var pagString = query.match(/\d+$/).toString();
+        var pagNum = parseInt(pagString);
+        console.log(query);
+        console.log(pagNum);
+        console.log(string[1]);
+        // end: assign variables for url inputs
+        // start: setup the connection properties for imgur
         var options = {
             hostname: 'api.imgur.com',
-            path: '/3/gallery/search/?' + url,
+            path: '/3/gallery/search/?' + query,
             headers: {'Authorization': 'Client-ID f472a29449d911f'},
             method: 'GET'
         };
-        
-        // build body for imgur response found on stack overflow by rdjs 
-        //http://stackoverflow.com/questions/11826384/calling-a-json-api-with-node-js
+        // end: setup the connection properties for imgur
+        // start: build image json file
         https.get(options, function(res) {
           var body = "";
           
@@ -62,37 +66,77 @@ mongo.connect(monlab, function(err, db) {
           
           res.on('end', function() {
             var fbResponse = JSON.parse(body);
-            console.log("Object was created successfully!! -- " + fbResponse);
-            insertObj(fbResponse);
+            console.log("Object was created successfully!!");
+            saveObj(fbResponse);
           });
         }).on('error', function(e) {
           console.log("Got an error: ", e);
         });
-        // insert object into monlab
-        function insertObj(d) {
-          var search = db.collection('search');
-          search.insert(d);
-          console.log("Save was successful!!!");
-          findObj();
+        // end: build image json file
+        // start: save object to database
+        function saveObj(object) {
+            var search = db.collection('search');
+            search.insert(object.data);
+            console.log("Save was successful!!!");
+            createHistory();
         }
-        // find data and return to user
+        // end: save object to database
+        // start: create history
+        function createHistory() {
+            var history = {
+                'subject' : string[1],
+                'date' : new Date().toString()
+            };
+            saveHistory(history);
+        }
+        // end: create history
+        // start: save history
+        function saveHistory(obj) {
+            var latest = db.collection('latest');
+            latest.insert(obj);
+            findObj();
+        }
+        // end" save history
+        // start: find documents in mongodb
         function findObj() {
             var search = db.collection('search');
-            search.find(
-            {
+            search.find({
             }, {
                 "_id" : 0,
-                "data.link" : 1,
-                "data.id" : 1,
-                "data.title" : 1,
-            }).toArray(function(err, data) {
+                "link" : 1,
+                "id" : 1,
+                "title" : 1
+            }).limit(pagNum).toArray(function(err, results) {
                 if (err) throw err;
-                res.send(data);
-                
+                console.log("Returned #" + results.length + " documents");
+                res.send({results});
             });
-        }
-    });
-    
+        } // end: find documents in mongodb
+        
+        app.get('/latest', function(req, res) {
+            
+            getHistory();
+            
+            function getHistory() {
+               var latest = db.collection('latest');
+               latest.find({
+                }, {
+                    "subject" : 1,
+                    "date" : 1,
+                    "_id" : 0
+                }).toArray(function(err, data) {
+                    if(err) throw err;
+                    console.log(data);
+                    res.send("dwight");
+                });
+                
+            }
+        
+        });
+        
+    }); // end: app.get('/search/:query') 
+        
+   
 }); // end of mongodb connections
 
 
