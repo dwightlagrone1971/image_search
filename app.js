@@ -29,7 +29,7 @@ mongo.connect(monlab, function(err, db) {
     // set route to search imgur url
     app.get('/search/:query', function(req, res) {
         
-        // sart: clear database
+        /* sart: clear database
         db.collection('search', {}, function(err, search) {
             if (err) throw err;
             search.remove({}), function(err, results) {
@@ -38,7 +38,7 @@ mongo.connect(monlab, function(err, db) {
                 }
             };
         });
-        // end: clear database
+        // end: clear database */
         // start: assign variables for url inputs
         var query = req.params.query;
         var string = query.match('=([^;]*)&');
