@@ -65,9 +65,9 @@ mongo.connect(monlab, function(err, db) {
           });
           
           res.on('end', function() {
-            var fbResponse = JSON.parse(body);
+            var jsonObject = JSON.parse(body);
             console.log("Object was created successfully!!");
-            saveObj(fbResponse);
+            saveObj(jsonObject);
           });
         }).on('error', function(e) {
           console.log("Got an error: ", e);
@@ -77,7 +77,7 @@ mongo.connect(monlab, function(err, db) {
         function saveObj(object) {
             var search = db.collection('search');
             search.insert(object.data);
-            console.log("Save was successful!!!");
+            console.log("Object was saved successfully!!!");
             createHistory();
         }
         // end: save object to database
@@ -102,7 +102,7 @@ mongo.connect(monlab, function(err, db) {
             var search = db.collection('search');
             search.find({
             }, {
-                "_id" : 0,
+                "_id" : 1,
                 "link" : 1,
                 "id" : 1,
                 "title" : 1
@@ -127,7 +127,7 @@ mongo.connect(monlab, function(err, db) {
                 }).toArray(function(err, data) {
                     if(err) throw err;
                     console.log(data);
-                    res.send("dwight");
+                    res.send(data);
                 });
                 
             }

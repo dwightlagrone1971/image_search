@@ -9,14 +9,13 @@ html
   body
     div.container
       div#examples
-        h2 Examples
-      div#form
-        div#title
-          h1 Image Search
-        div.formSearch 
-          form(action="search/submit", method="post")
-            input#searchBar(type="text", name="search", value="", placeholder="Start Search Here.....", onkeydown="changeRoute(event)")
-            button#searchBtn(type="submit", onclick="changeRouteButton()") Go!
+        h1 Image Search - FCC
+        h2 Examples:
+        h3 Search Specific Topic
+        h4 https://nameless-ocean-40330.herokuapp.com/search/q=catss&offset=5
+        h4 https://nameless-ocean-40330.herokuapp.com/search/q=dogss&offset=1
+        h3 Search Latest Entries
+        h4 https://nameless-ocean-40330.herokuapp.com/latest
         
   
 script.
